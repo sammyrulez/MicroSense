@@ -1,6 +1,6 @@
 import sqlite3
 from typing import List
-con = sqlite3.connect("metrics.db")
+con = sqlite3.connect("./shared-volume/metrics.db")
 cur = con.cursor()
 cur.execute("CREATE TABLE IF NOT EXISTS  metrics (timestamp INT, value REAL, metric VARCHAR(255))")
 

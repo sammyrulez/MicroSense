@@ -9,6 +9,8 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
       - ./shared-volume:/var/data
+    environment:
+      - GF_INSTALL_PLUGINS=frser-sqlite-datasource
 volumes:
   grafana-storage: {}
   shared-volume:

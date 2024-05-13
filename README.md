@@ -22,10 +22,10 @@ To install MicroSense, simply clone this repository to your MicroPython device.
 import microsense
 
 # Initialize MicroSense
-microsense.init(config)
+microsense.init(api_key='YOUR', device_id='DEVICE_SERIAL_NUMBER')
 
 # Start capturing telemetry data
-microsense.start()
+microsense.send_telemetry()
 ```
 
 ## Roadmap

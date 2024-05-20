@@ -81,15 +81,15 @@ COPY ./poetry.lock poetry.lock
 COPY ./pyproject.toml pyproject.toml
 # Install the python packages
 WORKDIR app/
-ENV POETRY_ENV=fastapi-template
+ENV POETRY_ENV=prod
 RUN poetry install --without dev
 
 # Copy application contents to the container
-COPY ./app /app/app
+COPY ./microsense /app/microsense
 COPY version.txt /app/version.txt
 # Set the pythonpath and path that python can find the custom modules in the app-folder for import
-ENV PATH=$PATH:/app/app
-ENV PYTHONPATH=/app/app
+ENV PATH=$PATH:/app/microsense
+ENV PYTHONPATH=/app/microsense
 # Environment variables for this docker container (provide defaults or comment out)
 # If other global env-variables are needed, set them here.
 # Environment dependen variables should be set in the helm/%env%_values.yml files
@@ -106,6 +106,6 @@ RUN whoami
 CMD /.venv/activate
 RUN poetry env info
 
-CMD [ "gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--config", "/app/app/gunicorn_conf.py", "main:app"]
+CMD [ "gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--config", "/app/app/gunicorn_conf.py", "microsense.main:app"]
 # Start Gunicorn
 #CMD gunicorn -k "$WORKER_CLASS" -c "$GUNICORN_CONF" "$APP_MODULE"

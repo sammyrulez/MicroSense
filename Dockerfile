@@ -1,6 +1,6 @@
 FROM python:3.10-slim-buster
 
-LABEL maintainer="Florian Salfenmoser <florian.salfenmoser.dev@outlook.de>"
+LABEL maintainer="Sam Reghenzi <sammyrulez@gmail.com>"
 LABEL build-date=$BUILD_DATE
 
 
@@ -103,9 +103,7 @@ EXPOSE $PORT
 WORKDIR /app
 RUN whoami
 #RUN ls -la
-CMD /.venv/activate
+RUN /.venv/activate
 RUN poetry env info
 
-CMD [ "gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--config", "/app/app/gunicorn_conf.py", "microsense.main:app"]
-# Start Gunicorn
-#CMD gunicorn -k "$WORKER_CLASS" -c "$GUNICORN_CONF" "$APP_MODULE"
+CMD [ "gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--config", "/app/gunicorn_conf.py", "microsense.main:app"]

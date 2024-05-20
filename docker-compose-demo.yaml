@@ -11,16 +11,6 @@ services:
       - ./shared-volume:/var/data
     environment:
       - GF_INSTALL_PLUGINS=frser-sqlite-datasource
-  microsense:
-    image: microsense
-    ports:
-      - '8000:8000'
-    volumes:
-      - ./shared-volume:/app/shared-volume
-    environment:
-      - MICROSENSE_DB_PATH=/app/shared-volume/microsense.db
-      - MICROSENSE_API_KEY=123456    
-      - PORT=8000
 
 volumes:
   grafana-storage: {}

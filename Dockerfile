@@ -35,6 +35,7 @@ ENV PYTHONUNBUFFERED=1 \
 ENV PATH="$POETRY_HOME/bin:$POETRY_VIRTUALENVS_PATH/bin:$PATH"
 
 # install poetry
+RUN apt-get -y update; apt-get -y install curl
 RUN curl -sSL https://install.python-poetry.org | python3 -
 RUN poetry --version
 RUN poetry config virtualenvs.path ${POETRY_VIRTUALENVS_PATH}
@@ -42,7 +43,7 @@ RUN poetry config virtualenvs.path ${POETRY_VIRTUALENVS_PATH}
 RUN poetry config --list
 
 # Create the app dir
-RUN mkdir -p /app/app
+RUN mkdir -p /app/microsense
 RUN mkdir -p ${POETRY_VIRTUALENVS_PATH}
 #RUN find /app -type d -exec chmod 755 {} \;
 #RUN find /app -type f -exec chmod 644 {} \;
@@ -50,9 +51,12 @@ RUN mkdir -p ${POETRY_VIRTUALENVS_PATH}
 #RUN find ${POETRY_VIRTUALENVS_PATH} -type f -exec chmod 644 {} \;
 WORKDIR /app/
 
+
+
 # Create the tmp directorys for file processing
 RUN mkdir -p /app/tmp/in
 RUN mkdir -p /app/tmp/out
+RUN mkdir -p /app/shared-volume
 
 
 # Set the pythonpath and path that python can find the custom modules in the app-folder for import
@@ -73,20 +77,22 @@ ENV KEEPALIVE=15
 ENV MAX_REQUESTS=0
 ENV WEB_CONCURRENCY=1
 ENV HOST=0.0.0.0
-ENV PORT=8080
+ENV PORT=8000
 ENV LOG_LEVEL=error
 
 # Copy the conda environment infos (the "app"-Folder already exists, use this one to include everythin you need!)
 COPY ./poetry.lock poetry.lock
 COPY ./pyproject.toml pyproject.toml
+# Copy application contents to the container
+COPY ./microsense /app/microsense
+COPY ./gunicorn_conf.py /app/gunicorn_conf.py
+COPY ./README.md /app/README.md
 # Install the python packages
 WORKDIR app/
 ENV POETRY_ENV=prod
-RUN poetry install --without dev
+RUN poetry install 
 
-# Copy application contents to the container
-COPY ./microsense /app/microsense
-COPY version.txt /app/version.txt
+
 # Set the pythonpath and path that python can find the custom modules in the app-folder for import
 ENV PATH=$PATH:/app/microsense
 ENV PYTHONPATH=/app/microsense
@@ -102,8 +108,8 @@ EXPOSE $PORT
 # https://stackoverflow.com/questions/53763029/gunicorn-not-found-when-running-a-docker-container-with-venv
 WORKDIR /app
 RUN whoami
-#RUN ls -la
-RUN /.venv/activate
+RUN ls -la .venv/bin/activate
+RUN . .venv/bin/activate
 RUN poetry env info
 
 CMD [ "gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--config", "/app/gunicorn_conf.py", "microsense.main:app"]

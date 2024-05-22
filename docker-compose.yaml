@@ -11,17 +11,31 @@ services:
       - ./shared-volume:/var/data
     environment:
       - GF_INSTALL_PLUGINS=frser-sqlite-datasource
+    depends_on:
+      - tempo
+  loki:
+    image: grafana/loki:2.3.0
+    ports:
+      - 3100:3100
+    command: -config.file=/etc/loki/local-config.yaml
+  tempo:
+    image: grafana/tempo:1.2.0
+    command: [ "-search.enabled=true", "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./config/tempo.yaml:/etc/tempo.yaml
+    ports:
+      - 8000:8000 # tempo
   microsense:
     build: .
     container_name: microsense
     ports:
-      - '8000:8000'
+      - '8008:8008'
     volumes:
       - ./shared-volume:/app/shared-volume
     environment:
       - MICROSENSE_DB_PATH=/app/shared-volume/microsense.db
       - MICROSENSE_API_KEY=123456    
-      - PORT=8000
+      - PORT=8008
 
 volumes:
   grafana-storage: {}

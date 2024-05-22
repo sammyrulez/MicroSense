@@ -3,11 +3,14 @@ from typing import List
 from fastapi import FastAPI, Header, Response, Security
 from fastapi.security import APIKeyHeader  
 from microsense import version as microsense_version
-app = FastAPI("Microsense API", version=microsense_version, description="An API for Microsense devices telemetry data.")   
 from microsense import database
+from microsense import otlp_tracer
 from dataclasses import dataclass
 from datetime import datetime
 import os
+
+
+app = FastAPI("Microsense API", version=microsense_version, description="An API for Microsense devices telemetry data.")   
 
 MICROSENSE_API_KEY = os.environ.get("MICROSENSE_API_KEY")
 if MICROSENSE_API_KEY is None:
@@ -20,6 +23,8 @@ device_serial_number_header = Header("X-Device-Serial-Number")
 @app.on_event("startup")
 async def startup_event():
     print("Microsense API starting up version ", microsense_version)
+    otlp_tracer.init_tracer(app)
+
 
 @app.get("/") 
 async def main_route():     

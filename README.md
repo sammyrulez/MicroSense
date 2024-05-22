@@ -30,16 +30,16 @@ microsense.send_telemetry()
 
 ## Roadmap
 
-### v1.0 (Current)
+### v0.1.0 (Current)
 
 - Basic telemetry data collection and processing.
 - Support for common telemetry protocols.
 
-### v1.1 (Upcoming)
+### v0.2.0 (Upcoming)
 
 - Integration with OpenTelemetry for enhanced telemetry data collection and tracing capabilities.
 
-### v1.2 (Future)
+### v0.3.0 (Future)
 
 - Compatibility with Prometheus for monitoring and alerting functionalities.
 

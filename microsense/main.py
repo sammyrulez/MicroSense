@@ -2,7 +2,8 @@ from http.client import CREATED
 from typing import List
 from fastapi import FastAPI, Header, Response, Security
 from fastapi.security import APIKeyHeader  
-app = FastAPI()   
+from microsense import version as microsense_version
+app = FastAPI("Microsense API", version=microsense_version, description="An API for Microsense devices telemetry data.")   
 from microsense import database
 from dataclasses import dataclass
 from datetime import datetime
@@ -16,9 +17,13 @@ if MICROSENSE_API_KEY is None:
 api_key_header = APIKeyHeader(name="X-API-Key")
 device_serial_number_header = Header("X-Device-Serial-Number")
 
+@app.on_event("startup")
+async def startup_event():
+    print("Microsense API starting up version ", microsense_version)
+
 @app.get("/") 
 async def main_route():     
-  return {"message": "Hey, It is me Goku"}
+  return {"message": f"Hey, It is me Goku ver.{microsense_version}"}
 
 @dataclass
 class Metric:
